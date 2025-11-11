@@ -308,11 +308,10 @@ def crear_grafico_radar(nombre_vino):
             radialaxis=dict(
                 visible=True,
                 range=[0, 10],
-                showticklabels=True,
+                showticklabels=False,
                 ticks='',
                 gridcolor='#d4a574',
-                gridwidth=1.5,
-                tickfont=dict(size=18, color="#722f37")
+                gridwidth=1.5
             ),
             angularaxis=dict(
                 gridcolor='#d4a574',
