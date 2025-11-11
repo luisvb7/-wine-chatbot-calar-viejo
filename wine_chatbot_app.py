@@ -299,7 +299,7 @@ def crear_grafico_radar(nombre_vino):
         fill='toself',
         fillcolor=vino_data.get("color", "#722f37"),
         opacity=0.6,
-        line=dict(color=vino_data.get("color", "#722f37"), width=2),
+        line=dict(color=vino_data.get("color", "#722f37"), width=3),
         name=vino_data["nombre"]
     ))
 
@@ -311,26 +311,34 @@ def crear_grafico_radar(nombre_vino):
                 showticklabels=True,
                 ticks='',
                 gridcolor='#d4a574',
-                gridwidth=1
+                gridwidth=1.5,
+                tickfont=dict(size=18, color="#722f37")
             ),
             angularaxis=dict(
                 gridcolor='#d4a574',
-                linecolor='#722f37'
+                linecolor='#722f37',
+                tickfont=dict(size=20, family="EB Garamond, serif", color="#722f37", weight="bold")
             ),
             bgcolor='rgba(250, 248, 243, 0.5)'
         ),
         showlegend=False,
         title=dict(
-            text=f"Perfil de Cata: {vino_data['nombre']}",
-            font=dict(size=16, family="EB Garamond, serif", color="#722f37"),
+            text=f"<b>{vino_data['nombre']}</b>",
+            font=dict(size=24, family="EB Garamond, serif", color="#722f37"),
             x=0.5,
             xanchor='center'
         ),
-        height=400,
-        margin=dict(l=80, r=80, t=80, b=80),
+        height=500,
+        margin=dict(l=100, r=100, t=120, b=100),
         paper_bgcolor='rgba(250, 248, 243, 0.8)',
-        font=dict(family="EB Garamond, serif", size=12, color="#2c1810")
+        font=dict(family="EB Garamond, serif", size=16, color="#2c1810")
     )
+
+    # Hacer responsive con config
+    config = {
+        'displayModeBar': False,
+        'responsive': True
+    }
 
     return fig
 
@@ -362,28 +370,28 @@ def mostrar_imagen_vino(texto_respuesta):
     # Mostrar las imágenes y gráficos encontrados
     if vinos_encontrados:
         if len(vinos_encontrados) == 1:
+            # Un solo vino: lado a lado en desktop, stack en móvil
             col1, col2 = st.columns([1, 1])
             with col1:
                 st.image(vinos_encontrados[0][0], caption=vinos_encontrados[0][1], width=300)
             with col2:
                 grafico = crear_grafico_radar(vinos_encontrados[0][2])
                 if grafico:
-                    st.plotly_chart(grafico, use_container_width=True)
+                    st.plotly_chart(grafico, use_container_width=True, config={'displayModeBar': False, 'responsive': True})
         else:
-            # Si hay múltiples vinos, mostrar en fila
-            cols = st.columns(len(vinos_encontrados))
-            for idx, (imagen, caption, nombre_caract) in enumerate(vinos_encontrados):
-                with cols[idx]:
-                    st.image(imagen, caption=caption, width=250)
-
-            # Mostrar gráficos de radar en segunda fila
+            # Múltiples vinos: mostrar verticalmente para mejor visualización
             st.markdown("### 📊 Perfiles de Cata")
-            cols_graficos = st.columns(len(vinos_encontrados))
-            for idx, (_, _, nombre_caract) in enumerate(vinos_encontrados):
-                with cols_graficos[idx]:
-                    grafico = crear_grafico_radar(nombre_caract)
-                    if grafico:
-                        st.plotly_chart(grafico, use_container_width=True)
+            for imagen, caption, nombre_caract in vinos_encontrados:
+                # Contenedor para cada vino
+                with st.container():
+                    col1, col2 = st.columns([1, 1])
+                    with col1:
+                        st.image(imagen, caption=caption, use_column_width=True)
+                    with col2:
+                        grafico = crear_grafico_radar(nombre_caract)
+                        if grafico:
+                            st.plotly_chart(grafico, use_container_width=True, config={'displayModeBar': False, 'responsive': True})
+                    st.markdown("---")  # Separador entre vinos
 
 # Meta viewport para móviles
 st.markdown("""
@@ -857,9 +865,19 @@ st.markdown("""
             font-size: 0.8rem !important;
         }
 
-        /* Gráficos más pequeños */
+        /* Gráficos más grandes y legibles en tablet */
         .js-plotly-plot {
-            max-height: 300px !important;
+            min-height: 450px !important;
+        }
+
+        /* Aumentar tamaño de texto en gráficos */
+        .js-plotly-plot .plotly text {
+            font-size: 16px !important;
+        }
+
+        .js-plotly-plot .xtick text,
+        .js-plotly-plot .ytick text {
+            font-size: 16px !important;
         }
 
         /* Reducir márgenes de imágenes */
@@ -907,9 +925,28 @@ st.markdown("""
             max-width: 200px !important;
         }
 
-        /* Gráficos aún más compactos */
+        /* Gráficos optimizados para móvil pequeño */
         .js-plotly-plot {
-            max-height: 250px !important;
+            min-height: 400px !important;
+            max-height: 550px !important;
+        }
+
+        /* Texto más grande en gráficos móvil */
+        .js-plotly-plot .plotly text {
+            font-size: 15px !important;
+        }
+
+        .js-plotly-plot .xtick text,
+        .js-plotly-plot .ytick text,
+        .js-plotly-plot .angularaxistick text {
+            font-size: 16px !important;
+            font-weight: 600 !important;
+        }
+
+        /* Título del gráfico más visible */
+        .js-plotly-plot .gtitle {
+            font-size: 20px !important;
+            font-weight: bold !important;
         }
     }
 
