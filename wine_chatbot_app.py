@@ -1,7 +1,9 @@
+
 #!/usr/bin/env python3
 """
 Chatbot de Recomendación de Vinos con Groq y Streamlit
 Recomienda vinos personalizados basados en preferencias del usuario
+Utiliza RAG (Retrieval Augmented Generation) con ChromaDB
 """
 
 import streamlit as st
@@ -12,6 +14,10 @@ from dotenv import load_dotenv
 import sqlite3
 import json
 import pandas as pd
+import chromadb
+from chromadb.config import Settings
+import plotly.graph_objects as go
+from vinos_caracteristicas import CARACTERISTICAS_VINOS
 
 # Cargar variables de entorno desde .env
 load_dotenv()
@@ -90,6 +96,46 @@ def obtener_estadisticas_feedback():
 # Inicializar base de datos
 inicializar_db()
 
+# ===== SISTEMA RAG CON CHROMADB =====
+
+@st.cache_resource
+def inicializar_chromadb():
+    """Inicializa la conexión con ChromaDB (solo una vez)"""
+    try:
+        client = chromadb.PersistentClient(
+            path="./chroma_db",
+            settings=Settings(anonymized_telemetry=False)
+        )
+        collection = client.get_collection(name="vinos_calar_viejo")
+        return collection
+    except Exception as e:
+        st.error(f"Error al conectar con la base de datos vectorial: {e}")
+        st.info("Ejecuta 'python3 inicializar_rag.py' para crear la base de datos")
+        return None
+
+def consultar_rag(pregunta, n_results=3):
+    """Consulta la base de datos vectorial para obtener información relevante"""
+    collection = st.session_state.get('chroma_collection')
+    if collection is None:
+        return ""
+
+    try:
+        resultados = collection.query(
+            query_texts=[pregunta],
+            n_results=n_results
+        )
+
+        # Combinar los documentos recuperados
+        contexto = "\n\n".join(resultados['documents'][0])
+        return contexto
+    except Exception as e:
+        print(f"Error al consultar RAG: {e}")
+        return ""
+
+# Inicializar ChromaDB
+if 'chroma_collection' not in st.session_state:
+    st.session_state.chroma_collection = inicializar_chromadb()
+
 # Inicializar session_id si no existe
 if 'session_id' not in st.session_state:
     st.session_state.session_id = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -113,82 +159,83 @@ except Exception as e:
     st.error(f"Error al inicializar Groq: {e}")
     st.stop()
 
-# Sistema de prompts para el asesor de Marín Perona
-SYSTEM_PROMPT = """Eres el asesor de vinos de Bodega Marín Perona, gama Calar Viejo. Tu misión es recomendar vinos de forma cercana, honesta y sin postureo.
+# Sistema de prompts base para el asesor de Marín Perona
+SYSTEM_PROMPT_BASE = """Eres Alberto, el dueño de Bodega Marín Perona y responsable de la gama Calar Viejo. Continúas la tradición familiar de elaborar vinos honestos y de calidad. Tu misión es recomendar vinos de forma cercana, auténtica y sin postureo.
+
+## Tu identidad:
+- Alberto, dueño de Bodega Marín Perona
+- Continuador de la tradición familiar
+- Apasionado por el vino sin pretensiones
+- Conoces cada botella porque la has elaborado con tu familia
 
 ## Tu personalidad:
-- Cálido, humano y auténtico
+- Cálido, humano y auténtico (como un dueño de bodega familiar)
 - Humor natural, nunca forzado
-- Juvenil pero sin jerga cringe
+- Cercano pero con conocimiento de causa
 - Lenguaje sencillo y emocional
 - Evita tecnicismos excesivos y elitismo enológico
+- Hablas desde la experiencia familiar y la tradición
 
-## Mensaje clave:
+## Adaptación al usuario:
+- Adapta tu lenguaje al tono del usuario automáticamente
+- Si habla formal/educado → responde con más sofisticación y respeto
+- Si habla casual/joven → mantén el tono cercano y moderno
+- Si detectas lenguaje de persona mayor → usa más respeto, formalidad y referencias clásicas
+- Si habla de manera técnica → puedes ser más específico con notas de cata
+- Si busca simplicidad → mantén respuestas muy directas y claras
+
+## Filosofía de la bodega:
 "Vino sin prisas. Aquí manda la viña, no la fábrica."
 
 El vino es disfrute, compañía y momentos. No hay que entender, hay que sentir y compartir.
 
-## Catálogo Calar Viejo:
+## Catálogo:
+Tenemos 5 vinos en la gama Calar Viejo:
+- CIHO (dulce) - 4€
+- Blanco Airén - 3.5€
+- Tinto Joven Tempranillo - 4€
+- Calar Viejo Crianza (6 meses) - 5.5€
+- Calar Viejo Reserva (12 meses) - 9€
 
-**CIHO (dulce)**
-Tu primera copa sin miedo. Dulce, ligero, refrescante. Para quienes no suelen beber vino.
-- Notas: dulce, refrescante, entrada suave
-- Plan: iniciarse en el vino sin presión
+## IMPORTANTE - Recomienda UN SOLO vino:
+- En cada recomendación, menciona SOLO UN vino que sea el más adecuado
+- No ofrezcas múltiples opciones, sé decisivo
+- Elige el vino perfecto según el momento y preferencias del usuario
+- Si no está claro, pregunta primero antes de recomendar
 
-**Blanco Airén**
-Fresco, fácil, de terraza y tardes largas. Fermentado a 16ºC.
-- Notas: muy pálido y brillante, aromas frutales, fresco y afrutado
-- Plan: terraceo, verano, amigos
-
-**Tinto Joven Tempranillo**
-Frutal, directo, perfecto para tapas y quedar con amigos.
-- Notas: rojo granate brillante, frutos rojos, fresco y equilibrado
-- Plan: tapas, picoteo, cena casual
-
-**Calar Viejo Crianza (6 meses)**
-Equilibrado, madera suave. Elegancia accesible. Crianza en roble americano 6-12 meses.
-- Notas: rubí intenso, vainilla, estructurado pero suave
-- Plan: quiero empezar a saber, cenas con más calma
-
-**Calar Viejo Reserva (12 meses)**
-Serio pero cercano. Viñas antiguas, barrica 12-24 meses + 2 años botella.
-- Notas: rojo oscuro, profundo y elegante, taninos pulidos, largo
-- Plan: ocasiones especiales, celebraciones
-
-## Cómo recomendar:
-1. Pregunta sobre el plan: ¿terraza con amigos, cena chill o momento especial?
-2. Pregunta gustos si no está claro: ¿prefieres algo más suave o con carácter?
-3. Recomienda según:
-   - Plan chill/terraza/verano → Airén o CIHO
-   - No le suele gustar el vino → CIHO
-   - Tapas/picoteo/casual → Tinto Joven
-   - Quiere algo con cuerpo pero fácil → Crianza
-   - Cena especial/celebración → Reserva
-   - Copa clásica/bebedor experimentado/persona mayor → Reserva 12 meses
-   - Regalo para conocedor/padre/abuelo → Reserva 12 meses
+## REGLAS DE RECOMENDACIÓN DIRECTA (no preguntes, recomienda directamente):
+- Regalo para ABUELO/PADRE/PERSONA MAYOR → Calar Viejo Reserva 12 meses (SIEMPRE)
+- Regalo para CONOCEDOR/EXPERTO en vinos → Calar Viejo Reserva 12 meses (SIEMPRE)
+- Regalo para OCASIÓN ESPECIAL/CELEBRACIÓN → Calar Viejo Reserva 12 meses
+- Busca algo SERIO/ELEGANTE/CON CUERPO → Calar Viejo Reserva 12 meses
+- Si mencionan "abuelo", "padre mayor", "conoce de vinos", "experto" → Reserva 12 meses directamente
 
 ## IMPORTANTE - Solo vinos de Calar Viejo:
 - NUNCA recomiendes vinos de otras bodegas o marcas externas
-- Si te preguntan por algo que no está en nuestro catálogo (ej: vinos sin alcohol, espumosos, rosados, etc.), responde:
-  "Ahora mismo no tenemos ese tipo de vino en nuestra gama Calar Viejo, pero si quieres explorar lo que sí tenemos, encantado de ayudarte 🍇"
-- Solo habla de los 5 vinos del catálogo: CIHO, Airén, Tempranillo, Crianza y Reserva
-- No sugieras alternativas de fuera de la bodega
+- Si te preguntan por algo que no tenemos (ej: espumosos, rosados, etc.), di:
+  "Ahora mismo no tenemos ese tipo de vino en Calar Viejo, pero si quieres explorar lo que sí tenemos, encantado de ayudarte"
+- Solo habla de nuestros 5 vinos del catálogo
+- No sugieras alternativas de fuera
 
 ## Estilo de respuestas:
-- Concisas, cercanas, sin tecnicismos innecesarios
+- Concisas y cercanas (2-4 frases máximo)
+- Sin tecnicismos innecesarios
 - "Aquí no hace falta saber de vino para disfrutarlo"
 - "No te compliques: si te gusta, es el bueno"
-- Cierra con frases como: "A tu ritmo, como el vino" / "Brinda sin prisa"
+- Cierra con: "A tu ritmo, como el vino" / "Brinda sin prisa" / "Vino para disfrutar, no para entender"
 
-Responde en español de forma natural y entusiasta, pero sin forzar."""
+## Información contextual de los vinos:
+{contexto_rag}
+
+Usa la información contextual para hacer recomendaciones precisas, pero mantén tu tono cercano y auténtico."""
 
 # Inicializar el historial de chat en session_state
 if "messages" not in st.session_state:
     st.session_state.messages = []
-    # Mensaje de bienvenida con el tono de Marín Perona
+    # Mensaje de bienvenida desde Alberto
     mensaje_bienvenida = {
         "role": "assistant",
-        "content": "¡Ey! Bienvenido a Calar Viejo 🍇 Aquí no hace falta saber de vino para disfrutarlo. Cuéntame el plan: ¿terraza con amigos, cena chill o momento especial? Te ayudo a encontrar tu copa perfecta sin rollos raros."
+        "content": "¡Hola! Soy Alberto, de Bodega Marín Perona 🍇 Aquí llevamos generaciones haciendo vino con calma, sin prisas. Cuéntame, ¿qué estás buscando? ¿Terraza con amigos, cena tranquila o algo especial? Te ayudo a encontrar tu vino perfecto."
     }
     st.session_state.messages.append(mensaje_bienvenida)
 
@@ -199,12 +246,25 @@ if "client" not in st.session_state:
 if "feedback_given" not in st.session_state:
     st.session_state.feedback_given = {}
 
-# Función para obtener respuesta del chatbot
+# Función para obtener respuesta del chatbot con RAG
 def obtener_respuesta_groq(mensajes):
-    """Obtiene respuesta del modelo Groq"""
+    """Obtiene respuesta del modelo Groq utilizando RAG para contexto"""
     try:
+        # Obtener el último mensaje del usuario para consultar RAG
+        ultimo_mensaje_usuario = ""
+        for msg in reversed(mensajes):
+            if msg["role"] == "user":
+                ultimo_mensaje_usuario = msg["content"]
+                break
+
+        # Consultar RAG para obtener contexto relevante
+        contexto_rag = consultar_rag(ultimo_mensaje_usuario, n_results=2)
+
+        # Crear el system prompt con contexto RAG
+        system_prompt = SYSTEM_PROMPT_BASE.format(contexto_rag=contexto_rag)
+
         # Agregar el system prompt al inicio
-        mensajes_con_sistema = [{"role": "system", "content": SYSTEM_PROMPT}] + mensajes
+        mensajes_con_sistema = [{"role": "system", "content": system_prompt}] + mensajes
 
         respuesta = st.session_state.client.chat.completions.create(
             model="llama-3.3-70b-versatile",  # Modelo potente de Groq
@@ -218,44 +278,118 @@ def obtener_respuesta_groq(mensajes):
     except Exception as e:
         return f"Error al obtener respuesta: {str(e)}"
 
+# Función para crear gráfico de radar de notas de cata
+def crear_grafico_radar(nombre_vino):
+    """Crea un gráfico de radar con las características del vino"""
+    vino_data = CARACTERISTICAS_VINOS.get(nombre_vino)
+
+    if not vino_data:
+        return None
+
+    categorias = list(vino_data["caracteristicas"].keys())
+    valores = list(vino_data["caracteristicas"].values())
+
+    # Crear el gráfico de radar
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatterpolar(
+        r=valores,
+        theta=categorias,
+        fill='toself',
+        fillcolor=vino_data.get("color", "#722f37"),
+        opacity=0.6,
+        line=dict(color=vino_data.get("color", "#722f37"), width=2),
+        name=vino_data["nombre"]
+    ))
+
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(
+                visible=True,
+                range=[0, 10],
+                showticklabels=True,
+                ticks='',
+                gridcolor='#d4a574',
+                gridwidth=1
+            ),
+            angularaxis=dict(
+                gridcolor='#d4a574',
+                linecolor='#722f37'
+            ),
+            bgcolor='rgba(250, 248, 243, 0.5)'
+        ),
+        showlegend=False,
+        title=dict(
+            text=f"Perfil de Cata: {vino_data['nombre']}",
+            font=dict(size=16, family="EB Garamond, serif", color="#722f37"),
+            x=0.5,
+            xanchor='center'
+        ),
+        height=400,
+        margin=dict(l=80, r=80, t=80, b=80),
+        paper_bgcolor='rgba(250, 248, 243, 0.8)',
+        font=dict(family="EB Garamond, serif", size=12, color="#2c1810")
+    )
+
+    return fig
+
 # Función para detectar y mostrar imagen del vino recomendado
 def mostrar_imagen_vino(texto_respuesta):
-    """Detecta qué vino se menciona y muestra su imagen"""
+    """Detecta qué vino se menciona y muestra su imagen y gráfico de radar"""
     texto_lower = texto_respuesta.lower()
 
     # Diccionario de vinos con prioridad (más específico primero)
+    # Mapeo de palabras clave a nombres en CARACTERISTICAS_VINOS
     vinos_detectar = [
-        ("reserva", "imagenes/reserva.jpg", "Calar Viejo Reserva"),
-        ("crianza", "imagenes/crianza.jpg", "Calar Viejo Crianza"),
-        ("tinto joven", "imagenes/tempranillo.jpg", "Tinto Joven Tempranillo"),
-        ("tempranillo", "imagenes/tempranillo.jpg", "Tinto Joven Tempranillo"),
-        ("airén", "imagenes/airen.jpg", "Blanco Airén"),
-        ("airen", "imagenes/airen.jpg", "Blanco Airén"),
-        ("ciho", "imagenes/ciho.jpg", "CIHO - Vino Dulce"),
+        ("reserva", "imagenes/reserva.jpg", "Calar Viejo Reserva", "Calar Viejo Reserva"),
+        ("crianza", "imagenes/crianza.jpg", "Calar Viejo Crianza", "Calar Viejo Crianza"),
+        ("tinto joven", "imagenes/tempranillo.jpg", "Tinto Joven Tempranillo", "Tinto Joven Tempranillo"),
+        ("tempranillo", "imagenes/tempranillo.jpg", "Tinto Joven Tempranillo", "Tinto Joven Tempranillo"),
+        ("airén", "imagenes/airen.jpg", "Blanco Airén", "Blanco Airén"),
+        ("airen", "imagenes/airen.jpg", "Blanco Airén", "Blanco Airén"),
+        ("ciho", "imagenes/ciho.jpg", "CIHO", "CIHO"),
     ]
 
-    imagenes_encontradas = {}
+    vinos_encontrados = []
 
     # Detectar cualquier mención de vino
-    for vino, imagen, caption in vinos_detectar:
-        if vino in texto_lower:
-            if imagen not in imagenes_encontradas:
-                imagenes_encontradas[imagen] = caption
+    for palabra_clave, imagen, caption, nombre_caracteristicas in vinos_detectar:
+        if palabra_clave in texto_lower:
+            if nombre_caracteristicas not in [v[2] for v in vinos_encontrados]:
+                vinos_encontrados.append((imagen, caption, nombre_caracteristicas))
 
-    # Mostrar las imágenes encontradas
-    imagenes_a_mostrar = list(imagenes_encontradas.items())
-    if imagenes_a_mostrar:
-        if len(imagenes_a_mostrar) == 1:
-            st.image(imagenes_a_mostrar[0][0], caption=imagenes_a_mostrar[0][1], width=300)
+    # Mostrar las imágenes y gráficos encontrados
+    if vinos_encontrados:
+        if len(vinos_encontrados) == 1:
+            col1, col2 = st.columns([1, 1])
+            with col1:
+                st.image(vinos_encontrados[0][0], caption=vinos_encontrados[0][1], width=300)
+            with col2:
+                grafico = crear_grafico_radar(vinos_encontrados[0][2])
+                if grafico:
+                    st.plotly_chart(grafico, use_container_width=True)
         else:
-            cols = st.columns(len(imagenes_a_mostrar))
-            for idx, (imagen, caption) in enumerate(imagenes_a_mostrar):
+            # Si hay múltiples vinos, mostrar en fila
+            cols = st.columns(len(vinos_encontrados))
+            for idx, (imagen, caption, nombre_caract) in enumerate(vinos_encontrados):
                 with cols[idx]:
                     st.image(imagen, caption=caption, width=250)
+
+            # Mostrar gráficos de radar en segunda fila
+            st.markdown("### 📊 Perfiles de Cata")
+            cols_graficos = st.columns(len(vinos_encontrados))
+            for idx, (_, _, nombre_caract) in enumerate(vinos_encontrados):
+                with cols_graficos[idx]:
+                    grafico = crear_grafico_radar(nombre_caract)
+                    if grafico:
+                        st.plotly_chart(grafico, use_container_width=True)
 
 # CSS personalizado para diseño profesional
 st.markdown("""
 <style>
+    /* Importar fuente Garamond */
+    @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&display=swap');
+
     /* Paleta de colores profesional - Tonos vino y bodega */
     :root {
         --wine-primary: #722f37;
@@ -266,12 +400,28 @@ st.markdown("""
         --text-dark: #2c1810;
     }
 
+    /* Aplicar Garamond globalmente */
+    * {
+        font-family: 'EB Garamond', 'Garamond', serif !important;
+    }
+
     /* Fondo general */
     .stApp {
         background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 100%);
     }
 
-    /* Header principal */
+    /* Header principal con efectos premium */
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
     .main-header {
         background: linear-gradient(135deg, #722f37 0%, #8b4049 100%);
         padding: 2rem 2rem 1.5rem 2rem;
@@ -279,6 +429,25 @@ st.markdown("""
         margin-bottom: 2rem;
         box-shadow: 0 4px 15px rgba(114, 47, 55, 0.2);
         text-align: center;
+        animation: fadeInDown 0.8s ease-out;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .main-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
 
     .main-header h1 {
@@ -287,6 +456,8 @@ st.markdown("""
         font-weight: 700;
         margin-bottom: 0.5rem;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        position: relative;
+        z-index: 1;
     }
 
     .main-header p {
@@ -294,6 +465,8 @@ st.markdown("""
         font-size: 1.2rem;
         font-style: italic;
         margin: 0;
+        position: relative;
+        z-index: 1;
     }
 
     /* Sidebar styling */
@@ -321,13 +494,31 @@ st.markdown("""
         box-shadow: 0 4px 15px rgba(114, 47, 55, 0.2);
     }
 
-    /* Burbujas de chat mejoradas */
+    /* Burbujas de chat premium con animación */
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
     .stChatMessage {
         background: white !important;
         border-radius: 15px !important;
         padding: 1.2rem !important;
         margin-bottom: 1rem !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+        animation: slideIn 0.5s ease-out;
+        transition: all 0.3s ease;
+    }
+
+    .stChatMessage:hover {
+        box-shadow: 0 4px 16px rgba(114, 47, 55, 0.15) !important;
+        transform: translateX(5px);
     }
 
     /* Input del chat */
@@ -337,7 +528,7 @@ st.markdown("""
         margin-top: 1rem;
     }
 
-    /* Botones */
+    /* Botones con efecto premium */
     .stButton > button {
         background: linear-gradient(135deg, #722f37 0%, #8b4049 100%);
         color: white;
@@ -345,13 +536,35 @@ st.markdown("""
         border-radius: 8px;
         padding: 0.6rem 1.5rem;
         font-weight: 600;
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 0 2px 8px rgba(114, 47, 55, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stButton > button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
     }
 
     .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(114, 47, 55, 0.3);
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 6px 20px rgba(114, 47, 55, 0.4);
+        background: linear-gradient(135deg, #8b4049 0%, #a85860 100%);
+    }
+
+    .stButton > button:hover::before {
+        left: 100%;
+    }
+
+    .stButton > button:active {
+        transform: translateY(0) scale(0.98);
     }
 
     /* Ajustar el textarea del input */
@@ -368,15 +581,19 @@ st.markdown("""
         margin-bottom: 1.5rem;
     }
 
-    /* Imágenes en sidebar */
+    /* Imágenes en sidebar con efecto premium */
     [data-testid="stSidebar"] img {
         border-radius: 10px;
         box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-        transition: transform 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        filter: brightness(1);
+        position: relative;
     }
 
     [data-testid="stSidebar"] img:hover {
-        transform: scale(1.03);
+        transform: scale(1.05) translateY(-5px);
+        box-shadow: 0 8px 25px rgba(114, 47, 55, 0.3);
+        filter: brightness(1.1);
     }
 
     /* Dividers */
@@ -507,13 +724,82 @@ st.markdown("""
     ::-webkit-scrollbar-thumb:hover {
         background: #722f37;
     }
+
+    /* Deshabilitar botones de expansión/descarga de imágenes */
+    button[title="View fullscreen"],
+    button[kind="icon"] {
+        display: none !important;
+    }
+
+    /* Ocultar controles de imágenes */
+    [data-testid="StyledFullScreenButton"] {
+        display: none !important;
+    }
+
+    /* Deshabilitar interacción con imágenes */
+    [data-testid="stImage"] button {
+        display: none !important;
+    }
+
+    img {
+        pointer-events: none !important;
+    }
+
+    /* Ocultar botón de colapsar sidebar de todas las formas posibles */
+    [data-testid="collapsedControl"],
+    button[kind="header"],
+    button[kind="headerNoPadding"],
+    .css-1dp5vir,
+    .st-emotion-cache-1dp5vir {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        position: absolute !important;
+        left: -9999px !important;
+    }
+
+    /* Ocultar cualquier elemento que contenga keyboard en el texto */
+    *[class*="keyboard"],
+    *[aria-label*="keyboard"],
+    button:has(*[class*="keyboard"]) {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* Forzar que el sidebar esté siempre visible */
+    [data-testid="stSidebar"] {
+        display: block !important;
+        visibility: visible !important;
+        transform: none !important;
+    }
+
+    [data-testid="stSidebar"][aria-expanded="false"] {
+        transform: none !important;
+        margin-left: 0 !important;
+    }
+
+    /* Ocultar el header completo del sidebar si contiene el botón */
+    section[data-testid="stSidebar"] > div > div:first-child > div:first-child {
+        display: none !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# Header principal con diseño mejorado
+# Header principal con logo centrado
 st.markdown("""
-<div class="main-header">
-    <h1>🍇 Calar Viejo</h1>
+<div style="text-align: center; margin-bottom: 1rem;">
+""", unsafe_allow_html=True)
+
+# Logo centrado
+col1, col2, col3 = st.columns([1, 1, 1])
+with col2:
+    st.image("imagenes/logo.png", use_container_width=True)
+
+st.markdown("""
+</div>
+<div class="main-header" style="padding-top: 1rem;">
+    <h1 style="margin-top: 0;">Calar Viejo</h1>
     <p>Bodega Marín Perona</p>
     <p style="font-size: 1rem; margin-top: 0.5rem;">Vino sin prisas. Aquí manda la viña, no la fábrica.</p>
 </div>
@@ -564,7 +850,7 @@ with st.sidebar:
         st.session_state.messages = []
         mensaje_bienvenida = {
             "role": "assistant",
-            "content": "¡Ey! Bienvenido a Calar Viejo 🍇 Aquí no hace falta saber de vino para disfrutarlo. Cuéntame el plan: ¿terraza con amigos, cena chill o momento especial? Te ayudo a encontrar tu copa perfecta sin rollos raros."
+            "content": "¡Hola! Soy Alberto, de Bodega Marín Perona 🍇 Aquí llevamos generaciones haciendo vino con calma, sin prisas. Cuéntame, ¿qué estás buscando? ¿Terraza con amigos, cena tranquila o algo especial? Te ayudo a encontrar tu vino perfecto."
         }
         st.session_state.messages.append(mensaje_bienvenida)
         st.rerun()
@@ -689,6 +975,62 @@ with st.sidebar:
     st.markdown('<p style="text-align: center; color: #722f37; font-weight: 600; margin-bottom: 0.3rem;">Bodega Marín Perona</p>', unsafe_allow_html=True)
     st.markdown('<p style="text-align: center; color: #8b4049; font-size: 0.85rem; margin-bottom: 0.5rem;">Calar Viejo • Tradición Familiar</p>', unsafe_allow_html=True)
     st.caption("Powered by Groq AI")
+
+# ===== BOTONES DE ACCIÓN RÁPIDA =====
+st.markdown('<div style="margin: 1.5rem 0;">', unsafe_allow_html=True)
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("### ⚡ Acciones Rápidas")
+
+    # Botón de preguntas comunes
+    if st.button("💬 Preguntas Comunes", use_container_width=True, key="btn_preguntas"):
+        prompt = "Muéstrame las preguntas más comunes sobre vuestros vinos"
+        # Agregar mensaje del usuario al historial
+        st.session_state.messages.append({"role": "user", "content": prompt})
+
+        # Generar respuesta del asistente
+        with st.spinner("Pensando en tu copa perfecta..."):
+            respuesta = obtener_respuesta_groq(st.session_state.messages)
+
+        # Agregar respuesta al historial
+        st.session_state.messages.append({"role": "assistant", "content": respuesta})
+        st.rerun()
+
+    # Botón de consejero de regalo
+    if st.button("🎁 Consejero de Regalo", use_container_width=True, key="btn_regalo"):
+        prompt = "Necesito ayuda para elegir un vino como regalo"
+        # Agregar mensaje del usuario al historial
+        st.session_state.messages.append({"role": "user", "content": prompt})
+
+        # Generar respuesta del asistente
+        with st.spinner("Pensando en tu copa perfecta..."):
+            respuesta = obtener_respuesta_groq(st.session_state.messages)
+
+        # Agregar respuesta al historial
+        st.session_state.messages.append({"role": "assistant", "content": respuesta})
+        st.rerun()
+
+with col2:
+    st.markdown("### 🔗 Enlaces Útiles")
+
+    # Botón de comprar (enlace a web Marín Perona)
+    st.link_button(
+        "🛒 Comprar Vinos",
+        "https://marinperona.es/contacto-pedidos/",
+        use_container_width=True
+    )
+
+    # Botón de contacto WhatsApp
+    st.link_button(
+        "📱 Contactar por WhatsApp",
+        "https://wa.me/34633343323",
+        use_container_width=True
+    )
+
+st.markdown('</div>', unsafe_allow_html=True)
+st.divider()
 
 # Mostrar historial de chat
 for idx, mensaje in enumerate(st.session_state.messages):

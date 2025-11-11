@@ -13,6 +13,7 @@ __pycache__/
 venv/
 env/
 ENV/
+bin/
 
 # IDE
 .vscode/
@@ -23,6 +24,34 @@ ENV/
 # Sistema
 .DS_Store
 Thumbs.db
+.cache/
+.config/
+.local/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Archivos personales del sistema (no parte del proyecto)
+Desktop/
+Documents/
+Downloads/
+Library/
+Movies/
+Music/
+Pictures/
+Public/
+Applications/
+Creative Cloud Files*/
+OneDrive*/
+.zsh*
+.cups/
+.oracle_jre_usage/
+.wdc/
+.fnmt/
+.CFUserTextEncoding
+.claude*
+matlab_crash_dump*
+XAI_API_KEY*
+cata_game*.py
+chatbot-grok/
+"Mejoras Winebot"
