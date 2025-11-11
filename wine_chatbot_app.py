@@ -1195,52 +1195,18 @@ with col2:
     st.markdown("### 🔗 Enlaces Útiles")
 
     # Botón de comprar (enlace a web Marín Perona)
-    st.markdown("""
-    <style>
-        .custom-link-button {
-            display: block !important;
-            text-decoration: none !important;
-            background: linear-gradient(135deg, #722f37 0%, #8b4049 100%) !important;
-            color: white !important;
-            border: none !important;
-            border-radius: 8px !important;
-            padding: 0.8rem 1.5rem !important;
-            font-weight: 600 !important;
-            text-align: center !important;
-            box-shadow: 0 2px 8px rgba(114, 47, 55, 0.2) !important;
-            margin-bottom: 0.8rem !important;
-            transition: all 0.3s ease !important;
-            min-height: 44px !important;
-            cursor: pointer !important;
-            pointer-events: auto !important;
-            touch-action: manipulation !important;
-            -webkit-tap-highlight-color: rgba(114, 47, 55, 0.3) !important;
-            position: relative !important;
-            z-index: 9999 !important;
-            font-family: 'EB Garamond', serif !important;
-            font-size: 1rem !important;
-            line-height: 1.5 !important;
-        }
-        .custom-link-button:hover {
-            background: linear-gradient(135deg, #8b4049 0%, #a85860 100%) !important;
-            transform: translateY(-2px) !important;
-            box-shadow: 0 4px 12px rgba(114, 47, 55, 0.3) !important;
-        }
-        .custom-link-button:active {
-            transform: translateY(0) !important;
-        }
-    </style>
-    <div class="custom-link-button" onclick="window.open('https://marinperona.es/contacto-pedidos/', '_blank')">
-        🛒 Comprar Vinos
-    </div>
-    """, unsafe_allow_html=True)
+    st.link_button(
+        "🛒 Comprar Vinos",
+        "https://marinperona.es/contacto-pedidos/",
+        use_container_width=True
+    )
 
     # Botón de contacto WhatsApp
-    st.markdown("""
-    <div class="custom-link-button" onclick="window.open('https://wa.me/34633343323', '_blank')">
-        📱 Contactar por WhatsApp
-    </div>
-    """, unsafe_allow_html=True)
+    st.link_button(
+        "📱 Contactar por WhatsApp",
+        "https://wa.me/34633343323",
+        use_container_width=True
+    )
 
 st.markdown('</div>', unsafe_allow_html=True)
 st.divider()
