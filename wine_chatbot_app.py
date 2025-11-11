@@ -818,39 +818,15 @@ st.markdown("""
             padding-right: 1rem !important;
         }
 
-        /* Centrar logo en móvil - forzar todo */
-        .logo-container {
-            display: block !important;
-            width: 100% !important;
-            margin: 0 auto 1rem auto !important;
-            text-align: center !important;
-        }
-
-        .logo-container > div {
-            display: block !important;
-            width: 100% !important;
+        /* Centrar todas las imágenes en móvil */
+        [data-testid="stImage"] {
+            display: flex !important;
             justify-content: center !important;
-        }
-
-        .logo-container [data-testid="column"] {
-            width: 100% !important;
-            max-width: 100% !important;
-            flex: 0 0 100% !important;
-            padding: 0 !important;
             margin: 0 auto !important;
-            text-align: center !important;
         }
 
-        .logo-container [data-testid="column"]:first-child,
-        .logo-container [data-testid="column"]:last-child {
-            display: none !important;
-        }
-
-        .logo-container img {
+        [data-testid="stImage"] img {
             margin: 0 auto !important;
-            display: block !important;
-            max-width: 250px !important;
-            width: 80% !important;
         }
 
         /* Ajustar fuentes para móvil */
@@ -1001,11 +977,15 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Header principal con logo centrado
-st.markdown('<div class="logo-container">', unsafe_allow_html=True)
-col1, col2, col3 = st.columns([1, 2, 1])
-with col2:
-    st.image("imagenes/logo.png", use_container_width=True)
-st.markdown('</div>', unsafe_allow_html=True)
+st.markdown("""
+<div style="display: flex; justify-content: center; align-items: center; width: 100%; margin: 1rem auto; text-align: center;">
+    <div style="max-width: 300px; width: 100%; padding: 0 1rem;">
+""", unsafe_allow_html=True)
+st.image("imagenes/logo.png", use_container_width=True)
+st.markdown("""
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 st.markdown("""
 <div class="main-header" style="padding-top: 1rem;">
