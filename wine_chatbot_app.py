@@ -1196,63 +1196,50 @@ with col2:
 
     # Botón de comprar (enlace a web Marín Perona)
     st.markdown("""
-    <a href="https://marinperona.es/contacto-pedidos/"
-       target="_blank"
-       rel="noopener noreferrer"
-       onclick="window.open('https://marinperona.es/contacto-pedidos/', '_blank'); return false;"
-       style="
-        display: block;
-        text-decoration: none;
-        background: linear-gradient(135deg, #722f37 0%, #8b4049 100%);
-        color: white !important;
-        border: none;
-        border-radius: 8px;
-        padding: 0.8rem 1.5rem;
-        font-weight: 600;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(114, 47, 55, 0.2);
-        margin-bottom: 0.5rem;
-        transition: all 0.3s ease;
-        min-height: 44px;
-        cursor: pointer !important;
-        pointer-events: auto !important;
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: rgba(114, 47, 55, 0.3);
-        position: relative;
-        z-index: 999;
-    ">
+    <style>
+        .custom-link-button {
+            display: block !important;
+            text-decoration: none !important;
+            background: linear-gradient(135deg, #722f37 0%, #8b4049 100%) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+            padding: 0.8rem 1.5rem !important;
+            font-weight: 600 !important;
+            text-align: center !important;
+            box-shadow: 0 2px 8px rgba(114, 47, 55, 0.2) !important;
+            margin-bottom: 0.8rem !important;
+            transition: all 0.3s ease !important;
+            min-height: 44px !important;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            touch-action: manipulation !important;
+            -webkit-tap-highlight-color: rgba(114, 47, 55, 0.3) !important;
+            position: relative !important;
+            z-index: 9999 !important;
+            font-family: 'EB Garamond', serif !important;
+            font-size: 1rem !important;
+            line-height: 1.5 !important;
+        }
+        .custom-link-button:hover {
+            background: linear-gradient(135deg, #8b4049 0%, #a85860 100%) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(114, 47, 55, 0.3) !important;
+        }
+        .custom-link-button:active {
+            transform: translateY(0) !important;
+        }
+    </style>
+    <div class="custom-link-button" onclick="window.open('https://marinperona.es/contacto-pedidos/', '_blank')">
         🛒 Comprar Vinos
-    </a>
+    </div>
     """, unsafe_allow_html=True)
 
     # Botón de contacto WhatsApp
     st.markdown("""
-    <a href="https://wa.me/34633343323"
-       target="_blank"
-       rel="noopener noreferrer"
-       onclick="window.open('https://wa.me/34633343323', '_blank'); return false;"
-       style="
-        display: block;
-        text-decoration: none;
-        background: linear-gradient(135deg, #722f37 0%, #8b4049 100%);
-        color: white !important;
-        border: none;
-        border-radius: 8px;
-        padding: 0.8rem 1.5rem;
-        font-weight: 600;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(114, 47, 55, 0.2);
-        transition: all 0.3s ease;
-        min-height: 44px;
-        cursor: pointer !important;
-        pointer-events: auto !important;
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: rgba(114, 47, 55, 0.3);
-        position: relative;
-        z-index: 999;
-    ">
+    <div class="custom-link-button" onclick="window.open('https://wa.me/34633343323', '_blank')">
         📱 Contactar por WhatsApp
-    </a>
+    </div>
     """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
