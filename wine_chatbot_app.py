@@ -507,15 +507,24 @@ st.markdown("""
         box-shadow: 0 4px 15px rgba(114, 47, 55, 0.2);
     }
 
-    /* Burbujas de chat premium con animación */
-    @keyframes slideIn {
+    /* Burbujas de chat premium con animación mejorada */
+    @keyframes slideInFromBottom {
         from {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(30px) scale(0.95);
         }
         to {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.02);
         }
     }
 
@@ -525,13 +534,18 @@ st.markdown("""
         padding: 1.2rem !important;
         margin-bottom: 1rem !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
-        animation: slideIn 0.5s ease-out;
+        animation: slideInFromBottom 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         transition: all 0.3s ease;
     }
 
     .stChatMessage:hover {
         box-shadow: 0 4px 16px rgba(114, 47, 55, 0.15) !important;
         transform: translateX(5px);
+    }
+
+    /* Último mensaje con efecto especial */
+    .stChatMessage:last-child {
+        animation: slideInFromBottom 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), pulse 0.5s ease 0.6s;
     }
 
     /* Input del chat */
@@ -1326,6 +1340,94 @@ if prompt := st.chat_input("Cuéntame el plan o qué buscas..."):
     st.session_state.messages.append({"role": "assistant", "content": respuesta})
 
 st.markdown('</div>', unsafe_allow_html=True)
+
+# JavaScript para scroll automático y feedback háptico
+st.markdown("""
+<script>
+    // Scroll automático suave al último mensaje
+    function smoothScrollToBottom() {
+        const chatMessages = document.querySelectorAll('[data-testid="stChatMessage"]');
+        if (chatMessages.length > 0) {
+            const lastMessage = chatMessages[chatMessages.length - 1];
+            lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+    }
+
+    // Observer para detectar nuevos mensajes
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.addedNodes.length > 0) {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.nodeType === 1 && (
+                        node.hasAttribute('data-testid') &&
+                        node.getAttribute('data-testid') === 'stChatMessage'
+                    )) {
+                        setTimeout(smoothScrollToBottom, 100);
+                    }
+                });
+            }
+        });
+    });
+
+    // Observar cambios en el contenedor principal
+    const mainContainer = document.querySelector('.main');
+    if (mainContainer) {
+        observer.observe(mainContainer, {
+            childList: true,
+            subtree: true
+        });
+    }
+
+    // Scroll inicial
+    setTimeout(smoothScrollToBottom, 500);
+
+    // Feedback háptico en móvil para todos los botones
+    function addHapticFeedback() {
+        // Botones de Streamlit
+        document.querySelectorAll('.stButton button').forEach(button => {
+            button.addEventListener('touchstart', () => {
+                if (navigator.vibrate) {
+                    navigator.vibrate(10); // Vibración suave de 10ms
+                }
+            });
+        });
+
+        // Enlaces y botones personalizados
+        document.querySelectorAll('a, .whatsapp-button, .custom-link-button, div[onclick]').forEach(element => {
+            element.addEventListener('touchstart', () => {
+                if (navigator.vibrate) {
+                    navigator.vibrate(10);
+                }
+            });
+        });
+
+        // Input del chat
+        const chatInput = document.querySelector('[data-testid="stChatInput"] textarea');
+        if (chatInput) {
+            chatInput.addEventListener('focus', () => {
+                if (navigator.vibrate) {
+                    navigator.vibrate(5); // Vibración más sutil al enfocar
+                }
+            });
+        }
+    }
+
+    // Aplicar feedback háptico
+    addHapticFeedback();
+
+    // Reaplica el feedback cuando se añaden nuevos elementos
+    const hapticObserver = new MutationObserver(() => {
+        addHapticFeedback();
+    });
+
+    if (mainContainer) {
+        hapticObserver.observe(mainContainer, {
+            childList: true,
+            subtree: true
+        });
+    }
+</script>
+""", unsafe_allow_html=True)
 
 # Footer profesional
 st.markdown("""
