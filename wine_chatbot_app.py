@@ -1200,15 +1200,20 @@ with col2:
         display: block;
         text-decoration: none;
         background: linear-gradient(135deg, #722f37 0%, #8b4049 100%);
-        color: white;
+        color: white !important;
         border: none;
         border-radius: 8px;
-        padding: 0.6rem 1.5rem;
+        padding: 0.8rem 1.5rem;
         font-weight: 600;
         text-align: center;
         box-shadow: 0 2px 8px rgba(114, 47, 55, 0.2);
         margin-bottom: 0.5rem;
         transition: all 0.3s ease;
+        min-height: 44px;
+        cursor: pointer;
+        pointer-events: auto !important;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: rgba(114, 47, 55, 0.3);
     ">
         🛒 Comprar Vinos
     </a>
@@ -1220,14 +1225,19 @@ with col2:
         display: block;
         text-decoration: none;
         background: linear-gradient(135deg, #722f37 0%, #8b4049 100%);
-        color: white;
+        color: white !important;
         border: none;
         border-radius: 8px;
-        padding: 0.6rem 1.5rem;
+        padding: 0.8rem 1.5rem;
         font-weight: 600;
         text-align: center;
         box-shadow: 0 2px 8px rgba(114, 47, 55, 0.2);
         transition: all 0.3s ease;
+        min-height: 44px;
+        cursor: pointer;
+        pointer-events: auto !important;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: rgba(114, 47, 55, 0.3);
     ">
         📱 Contactar por WhatsApp
     </a>
