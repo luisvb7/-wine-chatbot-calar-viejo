@@ -1205,18 +1205,43 @@ with col2:
     st.markdown("### 🔗 Enlaces Útiles")
 
     # Botón de comprar (enlace a web Marín Perona)
-    st.link_button(
-        "🛒 Comprar Vinos",
-        "https://marinperona.es/contacto-pedidos/",
-        use_container_width=True
-    )
+    st.markdown("""
+    <a href="https://marinperona.es/contacto-pedidos/" target="_blank" rel="noopener noreferrer" style="
+        display: block;
+        text-decoration: none;
+        background: linear-gradient(135deg, #722f37 0%, #8b4049 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(114, 47, 55, 0.2);
+        margin-bottom: 0.5rem;
+        transition: all 0.3s ease;
+    ">
+        🛒 Comprar Vinos
+    </a>
+    """, unsafe_allow_html=True)
 
     # Botón de contacto WhatsApp
-    st.link_button(
-        "📱 Contactar por WhatsApp",
-        "https://wa.me/34633343323",
-        use_container_width=True
-    )
+    st.markdown("""
+    <a href="https://wa.me/34633343323" target="_blank" rel="noopener noreferrer" style="
+        display: block;
+        text-decoration: none;
+        background: linear-gradient(135deg, #722f37 0%, #8b4049 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(114, 47, 55, 0.2);
+        transition: all 0.3s ease;
+    ">
+        📱 Contactar por WhatsApp
+    </a>
+    """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
 st.divider()
