@@ -818,24 +818,39 @@ st.markdown("""
             padding-right: 1rem !important;
         }
 
-        /* Centrar logo en móvil */
+        /* Centrar logo en móvil - forzar todo */
         .logo-container {
-            display: flex !important;
+            display: block !important;
+            width: 100% !important;
+            margin: 0 auto 1rem auto !important;
+            text-align: center !important;
+        }
+
+        .logo-container > div {
+            display: block !important;
+            width: 100% !important;
             justify-content: center !important;
-            align-items: center !important;
+        }
+
+        .logo-container [data-testid="column"] {
+            width: 100% !important;
+            max-width: 100% !important;
+            flex: 0 0 100% !important;
+            padding: 0 !important;
             margin: 0 auto !important;
             text-align: center !important;
         }
 
-        .logo-container [data-testid="column"] {
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
+        .logo-container [data-testid="column"]:first-child,
+        .logo-container [data-testid="column"]:last-child {
+            display: none !important;
         }
 
         .logo-container img {
             margin: 0 auto !important;
             display: block !important;
+            max-width: 250px !important;
+            width: 80% !important;
         }
 
         /* Ajustar fuentes para móvil */
