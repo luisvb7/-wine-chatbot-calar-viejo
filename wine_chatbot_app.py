@@ -818,6 +818,26 @@ st.markdown("""
             padding-right: 1rem !important;
         }
 
+        /* Centrar logo en móvil */
+        .logo-container {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            margin: 0 auto !important;
+            text-align: center !important;
+        }
+
+        .logo-container [data-testid="column"] {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+
+        .logo-container img {
+            margin: 0 auto !important;
+            display: block !important;
+        }
+
         /* Ajustar fuentes para móvil */
         .main-header h1 {
             font-size: 1.8rem !important;
@@ -966,17 +986,13 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Header principal con logo centrado
-st.markdown("""
-<div style="text-align: center; margin-bottom: 1rem;">
-""", unsafe_allow_html=True)
-
-# Logo centrado
-col1, col2, col3 = st.columns([1, 1, 1])
+st.markdown('<div class="logo-container">', unsafe_allow_html=True)
+col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.image("imagenes/logo.png", use_container_width=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("""
-</div>
 <div class="main-header" style="padding-top: 1rem;">
     <h1 style="margin-top: 0;">Calar Viejo</h1>
     <p>Bodega Marín Perona</p>
