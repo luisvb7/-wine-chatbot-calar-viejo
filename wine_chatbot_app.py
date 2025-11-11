@@ -1196,7 +1196,11 @@ with col2:
 
     # Botón de comprar (enlace a web Marín Perona)
     st.markdown("""
-    <a href="https://marinperona.es/contacto-pedidos/" target="_blank" rel="noopener noreferrer" style="
+    <a href="https://marinperona.es/contacto-pedidos/"
+       target="_blank"
+       rel="noopener noreferrer"
+       onclick="window.open('https://marinperona.es/contacto-pedidos/', '_blank'); return false;"
+       style="
         display: block;
         text-decoration: none;
         background: linear-gradient(135deg, #722f37 0%, #8b4049 100%);
@@ -1210,10 +1214,12 @@ with col2:
         margin-bottom: 0.5rem;
         transition: all 0.3s ease;
         min-height: 44px;
-        cursor: pointer;
+        cursor: pointer !important;
         pointer-events: auto !important;
         touch-action: manipulation;
         -webkit-tap-highlight-color: rgba(114, 47, 55, 0.3);
+        position: relative;
+        z-index: 999;
     ">
         🛒 Comprar Vinos
     </a>
@@ -1221,7 +1227,11 @@ with col2:
 
     # Botón de contacto WhatsApp
     st.markdown("""
-    <a href="https://wa.me/34633343323" target="_blank" rel="noopener noreferrer" style="
+    <a href="https://wa.me/34633343323"
+       target="_blank"
+       rel="noopener noreferrer"
+       onclick="window.open('https://wa.me/34633343323', '_blank'); return false;"
+       style="
         display: block;
         text-decoration: none;
         background: linear-gradient(135deg, #722f37 0%, #8b4049 100%);
@@ -1234,10 +1244,12 @@ with col2:
         box-shadow: 0 2px 8px rgba(114, 47, 55, 0.2);
         transition: all 0.3s ease;
         min-height: 44px;
-        cursor: pointer;
+        cursor: pointer !important;
         pointer-events: auto !important;
         touch-action: manipulation;
         -webkit-tap-highlight-color: rgba(114, 47, 55, 0.3);
+        position: relative;
+        z-index: 999;
     ">
         📱 Contactar por WhatsApp
     </a>
