@@ -385,11 +385,11 @@ def mostrar_imagen_vino(texto_respuesta):
             with col2:
                 grafico = crear_grafico_radar(vinos_encontrados[0][2])
                 if grafico:
-                    st.plotly_chart(grafico, use_container_width=True, config={'displayModeBar': False, 'responsive': True})
+                    st.plotly_chart(grafico, use_container_width=True, config={'displayModeBar': False, 'responsive': True}, key=f"radar_{vinos_encontrados[0][2]}")
         else:
             # Múltiples vinos: mostrar verticalmente para mejor visualización
             st.markdown("### 📊 Perfiles de Cata")
-            for imagen, caption, nombre_caract in vinos_encontrados:
+            for idx, (imagen, caption, nombre_caract) in enumerate(vinos_encontrados):
                 # Contenedor para cada vino
                 with st.container():
                     col1, col2 = st.columns([1, 1])
@@ -398,7 +398,7 @@ def mostrar_imagen_vino(texto_respuesta):
                     with col2:
                         grafico = crear_grafico_radar(nombre_caract)
                         if grafico:
-                            st.plotly_chart(grafico, use_container_width=True, config={'displayModeBar': False, 'responsive': True})
+                            st.plotly_chart(grafico, use_container_width=True, config={'displayModeBar': False, 'responsive': True}, key=f"radar_{nombre_caract}_{idx}")
                     st.markdown("---")  # Separador entre vinos
 
 # Meta viewport para móviles
