@@ -1201,34 +1201,31 @@ with col2:
         use_container_width=True
     )
 
-    # Botón de comprar con eventos táctiles nativos
+    # Botón de comprar - Información de contacto
     st.markdown("""
-    <div
-        ontouchstart="window.location.href='https://marinperona.es/contacto-pedidos/'"
-        onclick="window.location.href='https://marinperona.es/contacto-pedidos/'"
-        style="
-            background: linear-gradient(135deg, #722f37 0%, #8b4049 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0.8rem 1.5rem;
-            font-weight: 600;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(114, 47, 55, 0.2);
-            transition: all 0.3s ease;
-            min-height: 44px;
-            cursor: pointer;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-tap-highlight-color: rgba(114, 47, 55, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'EB Garamond', serif;
-            font-size: 1rem;
-            margin-top: 0.5rem;
-        ">
-        🛒 Comprar Vinos
+    <div style="
+        background: linear-gradient(135deg, #722f37 0%, #8b4049 100%);
+        color: white;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 0.5rem;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(114, 47, 55, 0.2);
+    ">
+        <div style="font-weight: 600; font-size: 1.1rem; margin-bottom: 0.5rem;">
+            🛒 Comprar Vinos
+        </div>
+        <div style="font-size: 0.95rem; line-height: 1.6;">
+            <a href="tel:926313192" style="color: white; text-decoration: none; display: block; margin: 0.3rem 0;">
+                📞 926 313 192
+            </a>
+            <a href="mailto:info@marinperona.es" style="color: white; text-decoration: none; display: block; margin: 0.3rem 0;">
+                ✉️ info@marinperona.es
+            </a>
+            <div style="font-size: 0.85rem; margin-top: 0.5rem; opacity: 0.9;">
+                marinperona.es/contacto-pedidos
+            </div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
