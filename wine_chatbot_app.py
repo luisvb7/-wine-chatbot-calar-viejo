@@ -1222,9 +1222,9 @@ with col2:
             <a href="mailto:info@marinperona.es" style="color: white; text-decoration: none; display: block; margin: 0.3rem 0;">
                 ✉️ info@marinperona.es
             </a>
-            <div style="font-size: 0.85rem; margin-top: 0.5rem; opacity: 0.9;">
-                marinperona.es/contacto-pedidos
-            </div>
+            <a href="https://marinperona.es/contacto-pedidos/" target="_blank" rel="noopener noreferrer" style="color: white; text-decoration: underline; display: block; margin-top: 0.5rem; font-size: 0.85rem; opacity: 0.9;">
+                🌐 marinperona.es/contacto-pedidos
+            </a>
         </div>
     </div>
     """, unsafe_allow_html=True)
