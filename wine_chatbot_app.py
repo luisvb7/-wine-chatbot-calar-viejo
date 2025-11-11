@@ -802,6 +802,22 @@ st.markdown("""
        ======================================== */
 
     @media (max-width: 768px) {
+        /* Ocultar sidebar completamente en móvil */
+        [data-testid="stSidebar"] {
+            display: none !important;
+        }
+
+        /* Contenido principal a ancho completo sin sidebar */
+        .main .block-container {
+            padding: 1rem !important;
+            max-width: 100% !important;
+        }
+
+        section.main > div {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+
         /* Ajustar fuentes para móvil */
         .main-header h1 {
             font-size: 1.8rem !important;
@@ -809,11 +825,6 @@ st.markdown("""
 
         .main-header p {
             font-size: 1rem !important;
-        }
-
-        /* Reducir padding general */
-        .main .block-container {
-            padding: 1rem !important;
         }
 
         .main-header {
@@ -845,18 +856,7 @@ st.markdown("""
             padding: 1rem !important;
         }
 
-        /* Sidebar responsive */
-        [data-testid="stSidebar"] {
-            width: 280px !important;
-        }
-
-        [data-testid="stSidebar"] img {
-            width: 100% !important;
-        }
-
-        [data-testid="stSidebar"] h2 {
-            font-size: 1.3rem !important;
-        }
+        /* Sidebar ya está oculta en móvil - no es necesario ajustar */
 
         /* Footer más compacto */
         .footer {
@@ -909,17 +909,7 @@ st.markdown("""
             width: 100% !important;
         }
 
-        /* Sidebar más estrecho */
-        [data-testid="stSidebar"] {
-            width: 260px !important;
-        }
-
-        /* Texto más pequeño en sidebar */
-        [data-testid="stSidebar"] {
-            font-size: 0.9rem !important;
-        }
-
-        /* Logo más pequeño */
+        /* Logo más pequeño en móvil */
         [data-testid="stImage"] img {
             max-width: 200px !important;
         }
