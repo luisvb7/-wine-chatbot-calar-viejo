@@ -351,22 +351,29 @@ def mostrar_imagen_vino(texto_respuesta):
     # Diccionario de vinos con prioridad (más específico primero)
     # Mapeo de palabras clave a nombres en CARACTERISTICAS_VINOS
     vinos_detectar = [
-        ("reserva", "imagenes/reserva.jpg", "Calar Viejo Reserva", "Calar Viejo Reserva"),
-        ("crianza", "imagenes/crianza.jpg", "Calar Viejo Crianza", "Calar Viejo Crianza"),
-        ("tinto joven", "imagenes/tempranillo.jpg", "Tinto Joven Tempranillo", "Tinto Joven Tempranillo"),
-        ("tempranillo", "imagenes/tempranillo.jpg", "Tinto Joven Tempranillo", "Tinto Joven Tempranillo"),
-        ("airén", "imagenes/airen.jpg", "Blanco Airén", "Blanco Airén"),
-        ("airen", "imagenes/airen.jpg", "Blanco Airén", "Blanco Airén"),
-        ("ciho", "imagenes/ciho.jpg", "CIHO", "CIHO"),
+        # Patrones específicos para evitar falsos positivos
+        (["calar viejo reserva", "reserva 12", "reserva (12"], "imagenes/reserva.jpg", "Calar Viejo Reserva", "Calar Viejo Reserva"),
+        (["calar viejo crianza", "crianza 6", "crianza (6"], "imagenes/crianza.jpg", "Calar Viejo Crianza", "Calar Viejo Crianza"),
+        (["tinto joven"], "imagenes/tempranillo.jpg", "Tinto Joven Tempranillo", "Tinto Joven Tempranillo"),
+        (["tempranillo"], "imagenes/tempranillo.jpg", "Tinto Joven Tempranillo", "Tinto Joven Tempranillo"),
+        (["airén", "airen"], "imagenes/airen.jpg", "Blanco Airén", "Blanco Airén"),
+        (["ciho"], "imagenes/ciho.jpg", "CIHO", "CIHO"),
     ]
 
     vinos_encontrados = []
 
     # Detectar cualquier mención de vino
-    for palabra_clave, imagen, caption, nombre_caracteristicas in vinos_detectar:
-        if palabra_clave in texto_lower:
-            if nombre_caracteristicas not in [v[2] for v in vinos_encontrados]:
-                vinos_encontrados.append((imagen, caption, nombre_caracteristicas))
+    for patrones, imagen, caption, nombre_caracteristicas in vinos_detectar:
+        # Si patrones es una lista, buscar cualquiera de ellos
+        if isinstance(patrones, list):
+            if any(patron in texto_lower for patron in patrones):
+                if nombre_caracteristicas not in [v[2] for v in vinos_encontrados]:
+                    vinos_encontrados.append((imagen, caption, nombre_caracteristicas))
+        else:
+            # Compatibilidad con formato antiguo
+            if patrones in texto_lower:
+                if nombre_caracteristicas not in [v[2] for v in vinos_encontrados]:
+                    vinos_encontrados.append((imagen, caption, nombre_caracteristicas))
 
     # Mostrar las imágenes y gráficos encontrados
     if vinos_encontrados:
