@@ -26,7 +26,8 @@ load_dotenv()
 st.set_page_config(
     page_title="Calar Viejo - Marín Perona",
     page_icon="🍇",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 # ===== SISTEMA DE FEEDBACK =====
@@ -383,6 +384,11 @@ def mostrar_imagen_vino(texto_respuesta):
                     grafico = crear_grafico_radar(nombre_caract)
                     if grafico:
                         st.plotly_chart(grafico, use_container_width=True)
+
+# Meta viewport para móviles
+st.markdown("""
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+""", unsafe_allow_html=True)
 
 # CSS personalizado para diseño profesional
 st.markdown("""
@@ -782,6 +788,153 @@ st.markdown("""
     /* Ocultar el header completo del sidebar si contiene el botón */
     section[data-testid="stSidebar"] > div > div:first-child > div:first-child {
         display: none !important;
+    }
+
+    /* ========================================
+       OPTIMIZACIÓN PARA MÓVILES
+       ======================================== */
+
+    @media (max-width: 768px) {
+        /* Ajustar fuentes para móvil */
+        .main-header h1 {
+            font-size: 1.8rem !important;
+        }
+
+        .main-header p {
+            font-size: 1rem !important;
+        }
+
+        /* Reducir padding general */
+        .main .block-container {
+            padding: 1rem !important;
+        }
+
+        .main-header {
+            padding: 1.5rem 1rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        /* Optimizar burbujas de chat */
+        .stChatMessage {
+            padding: 0.8rem !important;
+            margin-bottom: 0.8rem !important;
+        }
+
+        /* Botones más grandes para touch */
+        .stButton > button {
+            padding: 0.8rem 1.2rem !important;
+            font-size: 1rem !important;
+            min-height: 44px !important;
+        }
+
+        /* Ajustar botones de acción */
+        [data-testid="column"] {
+            padding: 0.5rem !important;
+        }
+
+        /* Input del chat más grande */
+        [data-testid="stChatInput"] textarea {
+            font-size: 16px !important;
+            padding: 1rem !important;
+        }
+
+        /* Sidebar responsive */
+        [data-testid="stSidebar"] {
+            width: 280px !important;
+        }
+
+        [data-testid="stSidebar"] img {
+            width: 100% !important;
+        }
+
+        [data-testid="stSidebar"] h2 {
+            font-size: 1.3rem !important;
+        }
+
+        /* Footer más compacto */
+        .footer {
+            padding: 1rem 0.5rem !important;
+            font-size: 0.8rem !important;
+        }
+
+        /* Gráficos más pequeños */
+        .js-plotly-plot {
+            max-height: 300px !important;
+        }
+
+        /* Reducir márgenes de imágenes */
+        [data-testid="stImage"] {
+            margin: 0.5rem 0 !important;
+        }
+    }
+
+    @media (max-width: 480px) {
+        /* Móviles muy pequeños */
+        .main-header h1 {
+            font-size: 1.5rem !important;
+        }
+
+        .main-header p {
+            font-size: 0.9rem !important;
+        }
+
+        /* Padding mínimo */
+        .main .block-container {
+            padding: 0.5rem !important;
+        }
+
+        .main-header {
+            padding: 1rem 0.5rem !important;
+        }
+
+        /* Botones full-width */
+        .stButton > button {
+            width: 100% !important;
+        }
+
+        /* Sidebar más estrecho */
+        [data-testid="stSidebar"] {
+            width: 260px !important;
+        }
+
+        /* Texto más pequeño en sidebar */
+        [data-testid="stSidebar"] {
+            font-size: 0.9rem !important;
+        }
+
+        /* Logo más pequeño */
+        [data-testid="stImage"] img {
+            max-width: 200px !important;
+        }
+
+        /* Gráficos aún más compactos */
+        .js-plotly-plot {
+            max-height: 250px !important;
+        }
+    }
+
+    /* Optimización para landscape en móvil */
+    @media (max-width: 896px) and (orientation: landscape) {
+        .main-header {
+            padding: 1rem !important;
+            margin-bottom: 0.5rem !important;
+        }
+
+        .main-header h1 {
+            font-size: 1.5rem !important;
+        }
+
+        .stChatMessage {
+            padding: 0.6rem !important;
+            margin-bottom: 0.5rem !important;
+        }
+    }
+
+    /* Evitar zoom en inputs en iOS */
+    @supports (-webkit-touch-callout: none) {
+        input, textarea, select {
+            font-size: 16px !important;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
