@@ -1194,17 +1194,17 @@ with col1:
 with col2:
     st.markdown("### 🔗 Enlaces Útiles")
 
-    # Botón de comprar (enlace a web Marín Perona)
-    st.link_button(
-        "🛒 Comprar Vinos",
-        "https://marinperona.es/contacto-pedidos/",
-        use_container_width=True
-    )
-
-    # Botón de contacto WhatsApp
+    # Botón de contacto WhatsApp (primero)
     st.link_button(
         "📱 Contactar por WhatsApp",
         "https://wa.me/34633343323",
+        use_container_width=True
+    )
+
+    # Botón de comprar (enlace a web Marín Perona) (segundo)
+    st.link_button(
+        "🛒 Comprar Vinos",
+        "https://marinperona.es/contacto-pedidos/",
         use_container_width=True
     )
 
