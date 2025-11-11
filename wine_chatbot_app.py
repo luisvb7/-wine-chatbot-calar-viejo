@@ -1194,19 +1194,43 @@ with col1:
 with col2:
     st.markdown("### 🔗 Enlaces Útiles")
 
-    # Botón de contacto WhatsApp (primero)
+    # Botón de contacto WhatsApp
     st.link_button(
         "📱 Contactar por WhatsApp",
         "https://wa.me/34633343323",
         use_container_width=True
     )
 
-    # Botón de comprar (enlace a web Marín Perona) (segundo)
-    st.link_button(
-        "🛒 Comprar Vinos",
-        "https://marinperona.es/contacto-pedidos/",
-        use_container_width=True
-    )
+    # Botón de comprar con eventos táctiles nativos
+    st.markdown("""
+    <div
+        ontouchstart="window.location.href='https://marinperona.es/contacto-pedidos/'"
+        onclick="window.location.href='https://marinperona.es/contacto-pedidos/'"
+        style="
+            background: linear-gradient(135deg, #722f37 0%, #8b4049 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(114, 47, 55, 0.2);
+            transition: all 0.3s ease;
+            min-height: 44px;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: rgba(114, 47, 55, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'EB Garamond', serif;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        ">
+        🛒 Comprar Vinos
+    </div>
+    """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
 st.divider()
