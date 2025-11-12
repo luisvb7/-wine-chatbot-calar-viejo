@@ -1099,43 +1099,6 @@ st.markdown("""
             font-size: 16px !important;
         }
     }
-
-    /* Botones de sugerencias contextuales */
-    .stButton > button {
-        background: linear-gradient(135deg, rgba(250, 248, 243, 0.9), rgba(245, 241, 232, 0.9));
-        border: 1.5px solid #d4a574 !important;
-        color: #722f37 !important;
-        font-size: 0.9rem !important;
-        font-weight: 500 !important;
-        padding: 0.5rem 0.75rem !important;
-        border-radius: 20px !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        box-shadow: 0 2px 8px rgba(114, 47, 55, 0.1) !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-    }
-
-    .stButton > button:hover {
-        background: linear-gradient(135deg, #722f37, #8b4049) !important;
-        color: white !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 4px 12px rgba(114, 47, 55, 0.25) !important;
-        border-color: #722f37 !important;
-    }
-
-    .stButton > button:active {
-        transform: translateY(0) !important;
-        box-shadow: 0 2px 6px rgba(114, 47, 55, 0.2) !important;
-    }
-
-    /* Responsivo para móviles */
-    @media (max-width: 768px) {
-        .stButton > button {
-            font-size: 0.85rem !important;
-            padding: 0.45rem 0.65rem !important;
-        }
-    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -1472,75 +1435,6 @@ with col2:
 st.markdown('</div>', unsafe_allow_html=True)
 st.divider()
 
-# Función para generar sugerencias contextuales
-def generar_sugerencias(respuesta_asistente, es_primer_mensaje=False):
-    """Genera sugerencias de respuesta rápida basadas en el contexto"""
-    respuesta_lower = respuesta_asistente.lower()
-
-    # Sugerencias iniciales (primer mensaje o saludo)
-    if es_primer_mensaje or len(st.session_state.messages) <= 2:
-        return [
-            "¿Qué vinos tenéis?",
-            "Quiero un vino para regalar",
-            "Busco algo para cenar",
-            "No sé qué elegir"
-        ]
-
-    # Detectar contexto y generar sugerencias específicas
-    sugerencias = []
-
-    # Si mencionó un vino específico
-    if any(vino in respuesta_lower for vino in ["ciho", "airén", "tempranillo", "crianza", "reserva"]):
-        sugerencias.extend([
-            "Cuéntame más sobre este vino",
-            "¿Con qué comida lo recomendarías?",
-            "¿Tienes algo similar?"
-        ])
-
-    # Si preguntó sobre ocasiones
-    if any(palabra in respuesta_lower for palabra in ["ocasión", "momento", "cuando"]):
-        sugerencias.extend([
-            "Es para una cena especial",
-            "Para un regalo",
-            "Para el día a día"
-        ])
-
-    # Si habló de comida
-    if any(palabra in respuesta_lower for palabra in ["comida", "plato", "maridaje", "carne", "pescado"]):
-        sugerencias.extend([
-            "Voy a comer carne",
-            "Prefiero pescado",
-            "Es para tapas"
-        ])
-
-    # Si mencionó precio
-    if any(palabra in respuesta_lower for palabra in ["€", "precio", "cuesta", "económico", "barato"]):
-        sugerencias.extend([
-            "¿Cuál es el más económico?",
-            "Busco algo especial",
-            "¿Tienes ofertas?"
-        ])
-
-    # Si está comparando
-    if "compar" in respuesta_lower or "diferencia" in respuesta_lower:
-        sugerencias.extend([
-            "Compara todos los vinos",
-            "¿Cuál es el mejor?",
-            "Ayúdame a decidir"
-        ])
-
-    # Sugerencias generales si no hay específicas
-    if not sugerencias:
-        sugerencias = [
-            "Más información",
-            "¿Algo más dulce?",
-            "¿Algo más seco?",
-            "Ver todos los vinos"
-        ]
-
-    # Limitar a 4 sugerencias
-    return sugerencias[:4]
-
 # Mostrar historial de chat
 for idx, mensaje in enumerate(st.session_state.messages):
     avatar = "🍷" if mensaje["role"] == "assistant" else "user"
@@ -1550,34 +1444,9 @@ for idx, mensaje in enumerate(st.session_state.messages):
         if mensaje["role"] == "assistant":
             mostrar_imagen_vino(mensaje["content"])
 
-            # Mostrar sugerencias solo en el último mensaje del asistente
-            if idx == len(st.session_state.messages) - 1:
-                es_primer_mensaje = len(st.session_state.messages) <= 2
-                sugerencias = generar_sugerencias(mensaje["content"], es_primer_mensaje)
-
-                # Crear columnas para los botones de sugerencias
-                st.markdown('<div style="margin-top: 1rem; margin-bottom: 0.5rem;">', unsafe_allow_html=True)
-                cols = st.columns(len(sugerencias))
-                for i, sugerencia in enumerate(sugerencias):
-                    with cols[i]:
-                        if st.button(sugerencia, key=f"sug_{idx}_{i}", use_container_width=True):
-                            # Almacenar la sugerencia seleccionada en session_state
-                            st.session_state.sugerencia_seleccionada = sugerencia
-                            st.rerun()
-                st.markdown('</div>', unsafe_allow_html=True)
-
 # Input del usuario con contenedor personalizado
 st.markdown('<div class="chat-input-wrapper">', unsafe_allow_html=True)
-
-# Manejar input del usuario o sugerencia seleccionada
-prompt = None
-if "sugerencia_seleccionada" in st.session_state and st.session_state.sugerencia_seleccionada:
-    prompt = st.session_state.sugerencia_seleccionada
-    st.session_state.sugerencia_seleccionada = None  # Limpiar después de usar
-else:
-    prompt = st.chat_input("Cuéntame el plan o qué buscas...")
-
-if prompt:
+if prompt := st.chat_input("Cuéntame el plan o qué buscas..."):
     # Agregar mensaje del usuario al historial
     st.session_state.messages.append({"role": "user", "content": prompt})
 
