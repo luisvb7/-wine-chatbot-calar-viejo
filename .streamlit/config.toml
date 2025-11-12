@@ -8,3 +8,9 @@ font="serif"
 [server]
 headless = true
 port = 8501
+enableXsrfProtection = false
+enableCORS = false
+
+[browser]
+serverAddress = "localhost"
+gatherUsageStats = false

@@ -14,7 +14,7 @@
     // Configuración
     const CONFIG = {
         // URL de tu chatbot en Streamlit Cloud
-        chatbotUrl: 'https://wine-chatbot-calar-viejo.streamlit.app',
+        chatbotUrl: 'http://localhost:8501/?embed=true',
 
         // Posición del botón (bottom-right, bottom-left, top-right, top-left)
         position: 'bottom-right',
