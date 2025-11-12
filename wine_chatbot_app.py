@@ -432,6 +432,57 @@ st.markdown("""
         background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 100%);
     }
 
+    /* Banner superior fijo */
+    .top-banner {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #722f37 0%, #8b4049 100%);
+        box-shadow: 0 2px 10px rgba(114, 47, 55, 0.3);
+        z-index: 999999;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .banner-content {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0 2rem;
+        max-width: 1200px;
+        width: 100%;
+    }
+
+    .banner-logo {
+        height: 50px;
+        width: auto;
+        object-fit: contain;
+    }
+
+    .banner-text h1 {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+        font-family: 'EB Garamond', serif;
+    }
+
+    .banner-text p {
+        color: #d4a574;
+        font-size: 0.9rem;
+        margin: 0;
+        font-style: italic;
+        font-family: 'EB Garamond', serif;
+    }
+
+    /* Espaciador para que el contenido no quede detrás del banner */
+    .banner-spacer {
+        height: 70px;
+    }
+
     /* Header principal con efectos premium */
     @keyframes fadeInDown {
         from {
@@ -825,6 +876,32 @@ st.markdown("""
        ======================================== */
 
     @media (max-width: 768px) {
+        /* Banner más compacto en móvil */
+        .top-banner {
+            height: 60px;
+        }
+
+        .banner-spacer {
+            height: 60px;
+        }
+
+        .banner-content {
+            padding: 0 1rem;
+            gap: 0.5rem;
+        }
+
+        .banner-logo {
+            height: 40px;
+        }
+
+        .banner-text h1 {
+            font-size: 1.2rem;
+        }
+
+        .banner-text p {
+            font-size: 0.75rem;
+        }
+
         /* Ocultar sidebar completamente en móvil */
         [data-testid="stSidebar"] {
             display: none !important;
@@ -999,24 +1076,38 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Header principal con logo centrado
+# Banner superior fijo con logo
 st.markdown("""
-<div style="display: flex; justify-content: center; align-items: center; width: 100%; margin: 1rem auto; text-align: center;">
-    <div style="max-width: 300px; width: 100%; padding: 0 1rem;">
-""", unsafe_allow_html=True)
-st.image("imagenes/logo.png", use_container_width=True)
-st.markdown("""
+<div class="top-banner">
+    <div class="banner-content">
+        <img src="app/static/imagenes/logo.png" alt="Calar Viejo" class="banner-logo">
+        <div class="banner-text">
+            <h1>Calar Viejo</h1>
+            <p>Bodega Marín Perona</p>
+        </div>
     </div>
 </div>
+<div class="banner-spacer"></div>
 """, unsafe_allow_html=True)
 
-st.markdown("""
-<div class="main-header" style="padding-top: 1rem;">
-    <h1 style="margin-top: 0;">Calar Viejo</h1>
-    <p>Bodega Marín Perona</p>
-    <p style="font-size: 1rem; margin-top: 0.5rem;">Vino sin prisas. Aquí manda la viña, no la fábrica.</p>
-</div>
-""", unsafe_allow_html=True)
+# Fallback para mostrar logo si la ruta app/static no funciona
+import base64
+from pathlib import Path
+
+try:
+    logo_path = Path("imagenes/logo.png")
+    if logo_path.exists():
+        with open(logo_path, "rb") as f:
+            logo_data = base64.b64encode(f.read()).decode()
+        st.markdown(f"""
+        <style>
+            .banner-logo {{
+                content: url(data:image/png;base64,{logo_data}) !important;
+            }}
+        </style>
+        """, unsafe_allow_html=True)
+except:
+    pass
 
 # Sidebar con información
 with st.sidebar:
