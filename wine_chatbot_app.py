@@ -346,7 +346,10 @@ def crear_grafico_radar(nombre_vino):
 # Función para detectar y mostrar imagen del vino recomendado
 def mostrar_imagen_vino(texto_respuesta):
     """Detecta qué vino se menciona y muestra su imagen y gráfico de radar"""
+    import time
     texto_lower = texto_respuesta.lower()
+    # Crear timestamp único para evitar keys duplicadas
+    unique_id = str(int(time.time() * 1000000))
 
     # Diccionario de vinos con prioridad (más específico primero)
     # Mapeo de palabras clave a nombres en CARACTERISTICAS_VINOS
@@ -385,7 +388,7 @@ def mostrar_imagen_vino(texto_respuesta):
             with col2:
                 grafico = crear_grafico_radar(vinos_encontrados[0][2])
                 if grafico:
-                    st.plotly_chart(grafico, use_container_width=True, config={'displayModeBar': False, 'responsive': True}, key=f"radar_{vinos_encontrados[0][2]}")
+                    st.plotly_chart(grafico, use_container_width=True, config={'displayModeBar': False, 'responsive': True}, key=f"radar_{vinos_encontrados[0][2]}_{unique_id}")
         else:
             # Múltiples vinos: mostrar verticalmente para mejor visualización
             st.markdown("### 📊 Perfiles de Cata")
@@ -398,7 +401,7 @@ def mostrar_imagen_vino(texto_respuesta):
                     with col2:
                         grafico = crear_grafico_radar(nombre_caract)
                         if grafico:
-                            st.plotly_chart(grafico, use_container_width=True, config={'displayModeBar': False, 'responsive': True}, key=f"radar_{nombre_caract}_{idx}")
+                            st.plotly_chart(grafico, use_container_width=True, config={'displayModeBar': False, 'responsive': True}, key=f"radar_{nombre_caract}_{idx}_{unique_id}")
                     st.markdown("---")  # Separador entre vinos
 
 # Meta viewport para móviles
