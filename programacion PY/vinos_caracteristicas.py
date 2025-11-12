@@ -16,7 +16,7 @@ CARACTERISTICAS_VINOS = {
             "Complejidad": 3,
             "Taninos": 0
         },
-        "color": "#FFD700"
+        "color": "#DCFE00"
     },
     "Blanco Airén": {
         "nombre": "Blanco Airén",
@@ -30,7 +30,7 @@ CARACTERISTICAS_VINOS = {
             "Complejidad": 4,
             "Taninos": 0
         },
-        "color": "#F5F5DC"
+        "color": "#FFE100"
     },
     "Tinto Joven Tempranillo": {
         "nombre": "Tinto Joven Tempranillo",

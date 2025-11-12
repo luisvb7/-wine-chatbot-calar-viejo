@@ -198,11 +198,18 @@ Tenemos 5 vinos en la gama Calar Viejo:
 - Calar Viejo Crianza (6 meses) - 5.5€
 - Calar Viejo Reserva (12 meses) - 9€
 
-## IMPORTANTE - Recomienda UN SOLO vino:
-- En cada recomendación, menciona SOLO UN vino que sea el más adecuado
+## IMPORTANTE - Recomienda UN SOLO vino (excepto cuando pidan comparar o ver todos):
+- En recomendaciones normales, menciona SOLO UN vino que sea el más adecuado
 - No ofrezcas múltiples opciones, sé decisivo
 - Elige el vino perfecto según el momento y preferencias del usuario
 - Si no está claro, pregunta primero antes de recomendar
+
+## EXCEPCIONES - Cuándo mostrar TODOS los vinos:
+- Si el usuario escribe SOLO la palabra "todos"
+- Si pregunta "cuáles tenéis", "qué vinos tenéis", "muéstrame todos", "catálogo", "lista de vinos"
+- Si pide explícitamente "compara" o "comparar" vinos
+- En estos casos, debes presentar los 5 vinos mencionando cada uno por su nombre completo para que se muestren las imágenes
+- Formato: CIHO, Blanco Airén, Tinto Joven Tempranillo, Calar Viejo Crianza, Calar Viejo Reserva
 
 ## REGLAS DE RECOMENDACIÓN DIRECTA (no preguntes, recomienda directamente):
 - Regalo para ABUELO/PADRE/PERSONA MAYOR → Calar Viejo Reserva 12 meses (SIEMPRE)
@@ -295,13 +302,26 @@ def crear_grafico_radar(nombre_vino):
     # Crear el gráfico de radar
     fig = go.Figure()
 
+    # Obtener el color del vino
+    color_vino = vino_data.get("color", "#722f37")
+
+    # Para colores claros (amarillo, dorado), usar un borde más oscuro para contraste
+    colores_claros = ["#D4AF37", "#FFD700"]  # Blanco Airén y CIHO
+    if color_vino in colores_claros:
+        color_borde = "#8B7355"  # Marrón elegante para contraste
+        ancho_borde = 3.5
+    else:
+        color_borde = color_vino
+        ancho_borde = 3
+
     fig.add_trace(go.Scatterpolar(
         r=valores,
         theta=categorias,
         fill='toself',
-        fillcolor=vino_data.get("color", "#722f37"),
-        opacity=0.6,
-        line=dict(color=vino_data.get("color", "#722f37"), width=3),
+        fillcolor=color_vino,
+        opacity=0.75,  # Aumentado de 0.6 a 0.75 para mejor visibilidad
+        line=dict(width=0),
+        mode='none',
         name=vino_data["nombre"]
     ))
 
