@@ -33,8 +33,8 @@ html_with_js = html_content.replace(
     f'<script>{js_content}</script>'
 )
 
-# Mostrar el HTML con el widget
-components.html(html_with_js, height=800, scrolling=True)
+# Mostrar el HTML con el widget (altura aumentada para ver todo el contenido)
+components.html(html_with_js, height=1200, scrolling=True)
 
 # Información adicional
 st.markdown("---")
