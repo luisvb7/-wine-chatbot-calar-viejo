@@ -438,10 +438,11 @@ st.markdown("""
         top: 0;
         left: 0;
         right: 0;
-        background: linear-gradient(135deg, #722f37 0%, #8b4049 100%);
-        box-shadow: 0 2px 10px rgba(114, 47, 55, 0.3);
+        background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 100%);
+        border-bottom: 3px solid #722f37;
+        box-shadow: 0 2px 15px rgba(114, 47, 55, 0.15);
         z-index: 999999;
-        height: 70px;
+        height: 100px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -450,29 +451,31 @@ st.markdown("""
     .banner-content {
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 1.5rem;
         padding: 0 2rem;
         max-width: 1200px;
         width: 100%;
     }
 
     .banner-logo {
-        height: 50px;
+        height: 80px;
         width: auto;
         object-fit: contain;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
     }
 
     .banner-text h1 {
-        color: white;
-        font-size: 1.5rem;
+        color: #722f37;
+        font-size: 2rem;
         font-weight: 700;
         margin: 0;
         font-family: 'EB Garamond', serif;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
     }
 
     .banner-text p {
-        color: #d4a574;
-        font-size: 0.9rem;
+        color: #8b4049;
+        font-size: 1rem;
         margin: 0;
         font-style: italic;
         font-family: 'EB Garamond', serif;
@@ -480,7 +483,7 @@ st.markdown("""
 
     /* Espaciador para que el contenido no quede detrás del banner */
     .banner-spacer {
-        height: 70px;
+        height: 100px;
     }
 
     /* Header principal con efectos premium */
@@ -876,30 +879,30 @@ st.markdown("""
        ======================================== */
 
     @media (max-width: 768px) {
-        /* Banner más compacto en móvil */
+        /* Banner en móvil */
         .top-banner {
-            height: 60px;
+            height: 80px;
         }
 
         .banner-spacer {
-            height: 60px;
+            height: 80px;
         }
 
         .banner-content {
             padding: 0 1rem;
-            gap: 0.5rem;
+            gap: 1rem;
         }
 
         .banner-logo {
-            height: 40px;
+            height: 60px;
         }
 
         .banner-text h1 {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
         }
 
         .banner-text p {
-            font-size: 0.75rem;
+            font-size: 0.85rem;
         }
 
         /* Ocultar sidebar completamente en móvil */
