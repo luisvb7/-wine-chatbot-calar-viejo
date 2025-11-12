@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Widget Chatbot - Marín Perona</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'EB Garamond', serif;
+            background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #722f37;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        h2 {
+            color: #8b4049;
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+        }
+
+        p {
+            color: #2c1810;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #722f37, #8b4049);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .highlight h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight p {
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .feature {
+            background: #faf8f3;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #722f37;
+        }
+
+        .feature h3 {
+            color: #722f37;
+            margin-bottom: 0.5rem;
+        }
+
+        .arrow {
+            text-align: center;
+            font-size: 3rem;
+            color: #722f37;
+            margin: 2rem 0;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid #d4a574;
+            color: #8b4049;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>🍷 Bodega Marín Perona</h1>
+        <p style="text-align: center; font-style: italic; color: #8b4049; margin-bottom: 3rem;">
+            Calar Viejo - Tradición Familiar
+        </p>
+
+        <div class="highlight">
+            <h3>¿Necesitas ayuda para elegir tu vino?</h3>
+            <p>Habla con Alberto, nuestro asesor virtual</p>
+            <div class="arrow">↓</div>
+            <p style="font-size: 1rem; opacity: 0.9;">
+                Mira el botón flotante en la esquina inferior derecha 👉
+            </p>
+        </div>
+
+        <h2>Nuestros Vinos</h2>
+        <div class="features">
+            <div class="feature">
+                <h3>🍯 CIHO</h3>
+                <p>Dulce y refrescante. Tu primera copa sin miedo.</p>
+                <p><strong>4€</strong></p>
+            </div>
+            <div class="feature">
+                <h3>🌾 Blanco Airén</h3>
+                <p>Fresco y fácil. De terraza y tardes largas.</p>
+                <p><strong>3.5€</strong></p>
+            </div>
+            <div class="feature">
+                <h3>🍷 Tinto Joven</h3>
+                <p>Frutal y directo. Perfecto para tapas.</p>
+                <p><strong>4€</strong></p>
+            </div>
+            <div class="feature">
+                <h3>🍇 Crianza 6 Meses</h3>
+                <p>Equilibrado, madera suave. Elegancia accesible.</p>
+                <p><strong>5.5€</strong></p>
+            </div>
+            <div class="feature">
+                <h3>👑 Reserva 12 Meses</h3>
+                <p>Serio pero cercano. Para ocasiones especiales.</p>
+                <p><strong>9€</strong></p>
+            </div>
+        </div>
+
+        <h2>Sobre el Widget</h2>
+        <p>
+            Este es un ejemplo de cómo se vería el widget del chatbot integrado en tu página web.
+            El botón flotante aparece en todas las páginas y permite a tus clientes consultar con Alberto,
+            tu asesor virtual, sobre qué vino elegir según sus gustos y ocasiones.
+        </p>
+
+        <h2>Características</h2>
+        <ul style="list-style: none; padding: 0;">
+            <li style="padding: 0.5rem 0;">✅ Widget flotante no intrusivo</li>
+            <li style="padding: 0.5rem 0;">✅ Animaciones suaves y elegantes</li>
+            <li style="padding: 0.5rem 0;">✅ Responsive (se adapta a móvil)</li>
+            <li style="padding: 0.5rem 0;">✅ Cierra con tecla Escape</li>
+            <li style="padding: 0.5rem 0;">✅ Feedback háptico en móvil</li>
+            <li style="padding: 0.5rem 0;">✅ Colores de marca Calar Viejo</li>
+        </ul>
+
+        <footer>
+            <p><strong>Bodega Marín Perona</strong></p>
+            <p>Vino sin prisas. Aquí manda la viña, no la fábrica.</p>
+            <p style="margin-top: 1rem; font-size: 0.9rem;">
+                📞 926 313 192 | 📱 633 343 323<br>
+                🌐 marinperona.es
+            </p>
+        </footer>
+    </div>
+
+    <!-- ⬇️ AQUÍ SE INCLUYE EL WIDGET ⬇️ -->
+    <script src="widget-chatbot.js"></script>
+</body>
+</html>

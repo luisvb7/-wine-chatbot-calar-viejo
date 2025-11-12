@@ -79,10 +79,22 @@ Haz clic en "Deploy" y espera unos minutos. ¡Tu chatbot estará en vivo!
 - Plotly (Visualizaciones)
 - Sentence Transformers (Embeddings)
 
+## 🌐 Widget para Integración Web
+
+¿Quieres añadir el chatbot a tu web? En la carpeta **`widget/`** encontrarás:
+
+- **`widget-chatbot.js`** → Botón flotante para tu web
+- **`ejemplo-widget.html`** → Página de demostración
+- **`INSTRUCCIONES-WIDGET.md`** → Guía completa de instalación
+
+El widget crea un botón flotante 🍷 en tu web que abre el chatbot en un iframe elegante.
+
+**[Ver instrucciones de instalación →](widget/INSTRUCCIONES-WIDGET.md)**
+
 ## 📝 Estructura del Proyecto
 
 ```
-├── wine_chatbot_app.py          # Aplicación principal
+├── wine_chatbot_app.py          # 🚀 Aplicación principal del chatbot
 ├── vinos_data.py                # Base de conocimiento de vinos
 ├── vinos_caracteristicas.py     # Características para gráficos
 ├── inicializar_rag.py           # Script para inicializar ChromaDB
@@ -90,9 +102,19 @@ Haz clic en "Deploy" y espera unos minutos. ¡Tu chatbot estará en vivo!
 ├── requirements.txt             # Dependencias
 ├── chroma_db/                   # Base de datos vectorial
 ├── imagenes/                    # Imágenes de vinos y logo
+├── widget/                      # 🌐 Archivos para integrar en web
+│   ├── widget-chatbot.js        #    → Widget flotante
+│   ├── ejemplo-widget.html      #    → Demo del widget
+│   ├── INSTRUCCIONES-WIDGET.md  #    → Guía de instalación
+│   └── README.md                #    → Info de la carpeta
 └── .streamlit/
-    └── config.toml             # Configuración de Streamlit
+    └── config.toml              # Configuración de Streamlit
 ```
+
+**⚠️ Importante:**
+- Los archivos en `widget/` son **solo para instalar en tu web**
+- **NO afectan** al funcionamiento del chatbot en Streamlit Cloud
+- Streamlit Cloud solo ejecuta `wine_chatbot_app.py`
 
 ## 👨‍💼 Autor
 
