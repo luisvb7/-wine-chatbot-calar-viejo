@@ -397,7 +397,7 @@ def mostrar_imagen_vino(texto_respuesta):
                 with st.container():
                     col1, col2 = st.columns([1, 1])
                     with col1:
-                        st.image(imagen, caption=caption, use_column_width=True)
+                        st.image(imagen, caption=caption, width=300)
                     with col2:
                         grafico = crear_grafico_radar(nombre_caract)
                         if grafico:
