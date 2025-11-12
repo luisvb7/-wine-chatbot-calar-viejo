@@ -1566,16 +1566,15 @@ for idx, mensaje in enumerate(st.session_state.messages):
                             st.rerun()
                 st.markdown('</div>', unsafe_allow_html=True)
 
-# Manejar sugerencia seleccionada
+# Input del usuario con contenedor personalizado
+st.markdown('<div class="chat-input-wrapper">', unsafe_allow_html=True)
+
+# Manejar input del usuario o sugerencia seleccionada
+prompt = None
 if "sugerencia_seleccionada" in st.session_state and st.session_state.sugerencia_seleccionada:
     prompt = st.session_state.sugerencia_seleccionada
     st.session_state.sugerencia_seleccionada = None  # Limpiar después de usar
 else:
-    prompt = None
-
-# Input del usuario con contenedor personalizado
-st.markdown('<div class="chat-input-wrapper">', unsafe_allow_html=True)
-if not prompt:
     prompt = st.chat_input("Cuéntame el plan o qué buscas...")
 
 if prompt:
