@@ -814,6 +814,61 @@ st.markdown("""
         padding: 0.5rem 0;
     }
 
+    /* Estilo premium para el texto del chat */
+    [data-testid="stChatMessageContent"] p {
+        font-size: 1.1rem !important;
+        line-height: 1.8 !important;
+        color: #2c1810 !important;
+        letter-spacing: 0.01em !important;
+        font-weight: 400 !important;
+        margin-bottom: 0.75rem !important;
+    }
+
+    /* Estilo para listas en el chat */
+    [data-testid="stChatMessageContent"] ul,
+    [data-testid="stChatMessageContent"] ol {
+        font-size: 1.05rem !important;
+        line-height: 1.7 !important;
+        margin-left: 1.5rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+
+    [data-testid="stChatMessageContent"] li {
+        margin-bottom: 0.5rem !important;
+        color: #2c1810 !important;
+    }
+
+    /* Estilo premium para títulos en el chat */
+    [data-testid="stChatMessageContent"] h1,
+    [data-testid="stChatMessageContent"] h2,
+    [data-testid="stChatMessageContent"] h3 {
+        color: #722f37 !important;
+        font-weight: 600 !important;
+        margin-top: 1rem !important;
+        margin-bottom: 0.75rem !important;
+        letter-spacing: -0.01em !important;
+    }
+
+    /* Estilo para negritas */
+    [data-testid="stChatMessageContent"] strong {
+        color: #722f37 !important;
+        font-weight: 600 !important;
+    }
+
+    /* Estilo para cursivas */
+    [data-testid="stChatMessageContent"] em {
+        color: #8b4049 !important;
+        font-style: italic !important;
+    }
+
+    /* Separadores de párrafo más elegantes */
+    [data-testid="stChatMessageContent"] hr {
+        border: none !important;
+        height: 1px !important;
+        background: linear-gradient(90deg, transparent, #d4a574, transparent) !important;
+        margin: 1.5rem 0 !important;
+    }
+
     /* Efecto hover en las tarjetas del sidebar */
     [data-testid="stSidebar"] .stMarkdown {
         transition: all 0.2s ease;
