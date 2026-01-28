@@ -118,5 +118,5 @@ El widget crea un botón flotante 🍷 en tu web que abre el chatbot en un ifram
 
 ## 👨‍💼 Autor
 
-Alberto - Bodega Marín Perona
+Luis Villar Balmy - Bodega Marín Perona
 *"Vino sin prisas. Aquí manda la viña, no la fábrica."*
